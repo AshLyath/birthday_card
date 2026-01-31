@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Happy Birthday.</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -16,12 +17,14 @@ body{
   align-items:center;
   font-family:'Patrick Hand', cursive;
   overflow:hidden;
+  touch-action: manipulation;
 }
 
 /* BOOK */
 .book{
-  width:380px;
-  height:520px;
+  width: min(90vw, 380px);
+  height: min(90vh, 520px);
+  aspect-ratio: 380 / 520;
   perspective:2000px;
   position:relative;
 }
@@ -89,6 +92,13 @@ p{font-size:18px; line-height:1.8; white-space:pre-line;}
   display:flex;
   justify-content:space-between;
   z-index:9999;
+}
+
+@media (max-width: 480px){
+  h1{ font-size: 26px; }
+  h2{ font-size: 20px; }
+  p{ font-size: 17px; }
+  .nav{ font-size: 16px; }
 }
 
 .nav{
