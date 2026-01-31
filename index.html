@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Birthday.</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  background:black;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:'Patrick Hand', cursive;
+  overflow:hidden;
+}
+
+/* BOOK */
+.book{
+  width:380px;
+  height:520px;
+  perspective:2000px;
+  position:relative;
+}
+
+/* PAGE */
+.page{
+  position:absolute;
+  inset:0;
+  background:black;
+  color:white;
+  padding:45px 40px;
+  border:1px solid rgba(255,255,255,0.15);
+  transform-origin:left;
+  transition:transform 1s cubic-bezier(.4,0,.2,1), filter .6s ease;
+  backface-visibility:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,.8);
+}
+
+.page::before{
+  content:"";
+  position:absolute;
+  left:0; top:0;
+  width:18px; height:100%;
+  background:linear-gradient(to right,rgba(255,255,255,.15),transparent);
+  opacity:.4;
+}
+
+.page.flipped{
+  transform:rotateY(-180deg);
+  filter:brightness(.92);
+  pointer-events:none;
+}
+
+/* COVER */
+.cover{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  text-align:center;
+  background:#050505;
+}
+
+.cover button{
+  margin-top:30px;
+  background:white;
+  color:black;
+  border:none;
+  padding:10px 26px;
+  font-family:'Patrick Hand', cursive;
+  font-size:16px;
+  cursor:pointer;
+}
+
+/* TEXT */
+h2{margin-bottom:18px;}
+p{font-size:18px; line-height:1.8; white-space:pre-line;}
+
+/* CONTROLS */
+.controls{
+  position:absolute;
+  bottom:16px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 40px);
+  display:flex;
+  justify-content:space-between;
+  z-index:9999;
+}
+
+.nav{
+  background:none;
+  border:1px solid white;
+  color:white;
+  padding:8px 16px;
+  font-size:15px;
+  cursor:pointer;
+  min-width:48px;
+}
+
+.nav.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+
+/* HOLD + SECRET */
+.hold{
+  position:absolute;
+  bottom:70px;
+  left:32px;
+  font-size:15px;
+  opacity:.6;
+  user-select:none;
+}
+
+.secret{
+  opacity:0;
+  transition:opacity 1.5s ease;
+  margin-top:30px;
+}
+.secret.show{opacity:1}
+
+/* FADE */
+.fade{
+  opacity:0;
+  animation:fadeIn 2s forwards;
+}
+@keyframes fadeIn{to{opacity:1}}
+
+audio{display:none;}
+</style>
+</head>
+
+<body>
+
+<div class="book">
+
+  <!-- COVER -->
+  <div class="page cover">
+    <h1>Happy Birthday.</h1>
+    <p>Even if things feel weird right now.</p>
+    <button id="openBtn">Open</button>
+  </div>
+
+  <!-- PAGE 1 -->
+  <div class="page">
+    <h2>Look.</h2>
+    <p>
+We might not be okay right now.
+
+But today is still your birthday.
+    </p>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page">
+    <h2>And that matters.</h2>
+    <p>
+Even if everything feels complicated,
+this day still belongs to you.
+    </p>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="page">
+    <h2>I tried.</h2>
+    <p>
+To find the right words.
+To not make this heavier than it is.
+    </p>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div class="page">
+    <h2>Maybe this is enough.</h2>
+    <p>
+Just honesty.
+Just showing up.
+    </p>
+  </div>
+
+  <!-- PAGE 5 -->
+  <div class="page">
+    <h2>No fixing.</h2>
+    <p>
+No pretending everything is fine.
+Just this.
+    </p>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div class="page">
+    <h2>Time passes.</h2>
+    <p>
+And feelings don’t always disappear
+the way we hope.
+    </p>
+  </div>
+
+  <!-- PAGE 7 -->
+  <div class="page">
+    <h2>Still.</h2>
+    <p>
+Some things stay soft.
+Even when they hurt.
+    </p>
+  </div>
+
+  <!-- PAGE 8 -->
+  <div class="page">
+    <h2>You mattered.</h2>
+    <p>
+You still do.
+More than you know.
+    </p>
+  </div>
+
+  <!-- PAGE 9 -->
+  <div class="page">
+    <h2 class="fade">Almost there.</h2>
+    <p class="fade">
+Just one more thing.
+    </p>
+  </div>
+
+  <!-- PAGE 10 (LAST PAGE) -->
+  <div class="page">
+    <h2 class="fade">That’s all.</h2>
+
+    <p class="fade">
+No speeches.
+No expectations.
+    </p>
+
+    <div class="hold" id="hold">(hold here)</div>
+
+    <p class="secret" id="secret">
+I still care.  
+More than I probably should.
+    </p>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button class="nav hidden" id="prevBtn">◀</button>
+    <button class="nav hidden" id="nextBtn">▶</button>
+  </div>
+
+</div>
+
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="rustle">
+  <source src="rustle.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const pages = document.querySelectorAll('.page');
+const music = document.getElementById('music');
+const rustle = document.getElementById('rustle');
+const openBtn = document.getElementById('openBtn');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const hold = document.getElementById('hold');
+const secret = document.getElementById('secret');
+
+let current = 0;
+
+/* STACK */
+pages.forEach((p,i)=>p.style.zIndex = pages.length - i);
+
+/* OPEN */
+openBtn.onclick = async ()=>{
+  try{
+    music.volume = .6;
+    await music.play();
+  }catch(e){}
+  flipNext();
+  checkControls();
+};
+
+/* SOUND */
+function playRustle(){
+  rustle.currentTime = 0;
+  rustle.volume = .5;
+  rustle.play().catch(()=>{});
+}
+
+/* FLIP */
+function flipNext(){
+  if(current < pages.length - 1){
+    playRustle();
+    pages[current].classList.add('flipped');
+    current++;
+    checkControls();
+  }
+}
+
+function flipPrev(){
+  if(current > 0){
+    playRustle();
+    current--;
+    pages[current].classList.remove('flipped');
+    checkControls();
+  }
+}
+
+nextBtn.onclick = flipNext;
+prevBtn.onclick = flipPrev;
+
+/* CONTROLS */
+function checkControls(){
+  prevBtn.classList.toggle('hidden', current === 0);
+  nextBtn.classList.toggle('hidden', current === 0 || current === pages.length - 1);
+}
+
+/* LONG PRESS */
+let pressTimer;
+['mousedown','touchstart'].forEach(e=>{
+  hold.addEventListener(e,()=>{
+    pressTimer = setTimeout(()=>secret.classList.add('show'),600);
+  });
+});
+['mouseup','mouseleave','touchend'].forEach(e=>{
+  hold.addEventListener(e,()=>clearTimeout(pressTimer));
+});
+
+checkControls();
+</script>
+
+</body>
+</html>
